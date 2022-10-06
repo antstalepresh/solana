@@ -70,16 +70,17 @@ pub fn process_instruction(
     let signers: HashSet<Pubkey> = get_signers(&keyed_accounts[first_instruction_account..]);
     match limited_deserialize(data)? {
         VoteInstruction::InitializeAccount(vote_init) => {
-            let rent = get_sysvar_with_account_check::rent(
-                keyed_account_at_index(keyed_accounts, first_instruction_account + 1)?,
-                invoke_context,
-            )?;
-            verify_rent_exemption(me, &rent)?;
-            let clock = get_sysvar_with_account_check::clock(
-                keyed_account_at_index(keyed_accounts, first_instruction_account + 2)?,
-                invoke_context,
-            )?;
-            vote_state::initialize_account(me, &vote_init, &signers, &clock)
+            Err(InstructionError::InvalidArgument)
+            // let rent = get_sysvar_with_account_check::rent(
+            //     keyed_account_at_index(keyed_accounts, first_instruction_account + 1)?,
+            //     invoke_context,
+            // )?;
+            // verify_rent_exemption(me, &rent)?;
+            // let clock = get_sysvar_with_account_check::clock(
+            //     keyed_account_at_index(keyed_accounts, first_instruction_account + 2)?,
+            //     invoke_context,
+            // )?;
+            // vote_state::initialize_account(me, &vote_init, &signers, &clock)
         }
         VoteInstruction::Authorize(voter_pubkey, vote_authorize) => {
             let clock = get_sysvar_with_account_check::clock(
