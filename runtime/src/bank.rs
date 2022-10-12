@@ -337,7 +337,7 @@ impl Clone for CachedExecutorsEntry {
 
 /// LFU Cache of executors with single-epoch memory of usage counts
 #[derive(Debug)]
-struct CachedExecutors {
+pub struct CachedExecutors {
     capacity: usize,
     current_epoch: Epoch,
     pub(self) executors: HashMap<Pubkey, CachedExecutorsEntry>,
