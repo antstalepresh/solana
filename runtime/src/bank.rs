@@ -1189,7 +1189,7 @@ pub struct Bank {
 
     /// Deprecated, do not use
     /// Latest transaction fees for transactions processed by this bank
-    fee_calculator: FeeCalculator,
+    pub fee_calculator: FeeCalculator,
 
     /// Track cluster signature throughput and adjust fee rate
     fee_rate_governor: FeeRateGovernor,
@@ -1198,7 +1198,7 @@ pub struct Bank {
     collected_rent: AtomicU64,
 
     /// latest rent collector, knows the epoch
-    rent_collector: RentCollector,
+    pub rent_collector: RentCollector,
 
     /// initialized from genesis
     epoch_schedule: EpochSchedule,
@@ -1218,9 +1218,9 @@ pub struct Bank {
     is_delta: AtomicBool,
 
     /// The builtin programs
-    builtin_programs: BuiltinPrograms,
+    pub builtin_programs: BuiltinPrograms,
 
-    compute_budget: Option<ComputeBudget>,
+    pub compute_budget: Option<ComputeBudget>,
 
     /// Dynamic feature transitions for builtin programs
     #[allow(clippy::rc_buffer)]
@@ -1237,7 +1237,7 @@ pub struct Bank {
     pub rewards_pool_pubkeys: Arc<HashSet<Pubkey>>,
 
     /// Cached executors
-    cached_executors: RwLock<CachedExecutors>,
+    pub cached_executors: RwLock<CachedExecutors>,
 
     transaction_debug_keys: Option<Arc<HashSet<Pubkey>>>,
 
@@ -1258,7 +1258,7 @@ pub struct Bank {
 
     cost_tracker: RwLock<CostTracker>,
 
-    sysvar_cache: RwLock<SysvarCache>,
+    pub sysvar_cache: RwLock<SysvarCache>,
 
     /// The initial accounts data size at the start of this Bank, before processing any transactions/etc
     accounts_data_size_initial: u64,
