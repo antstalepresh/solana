@@ -27,10 +27,10 @@ pub const MAX_TX_ACCOUNT_LOCKS: usize = 64;
 /// Sanitized transaction and the hash of its message
 #[derive(Debug, Clone)]
 pub struct SanitizedTransaction {
-    message: SanitizedMessage,
-    message_hash: Hash,
-    is_simple_vote_tx: bool,
-    signatures: Vec<Signature>,
+    pub message: SanitizedMessage,
+    pub message_hash: Hash,
+    pub is_simple_vote_tx: bool,
+    pub signatures: Vec<Signature>,
 }
 
 /// Set of accounts that must be locked for safe transaction processing
