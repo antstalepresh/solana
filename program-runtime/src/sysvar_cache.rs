@@ -40,7 +40,7 @@ pub struct SysvarCache {
 impl SysvarCache {
     pub fn get_clock(&self) -> Result<Arc<Clock>, InstructionError> {
         if self.clock.clone().is_none() {
-            panic("no clock")
+            panic!("no clock")
         }
         self.clock
             .clone()
@@ -59,7 +59,7 @@ impl SysvarCache {
 
     pub fn get_epoch_schedule(&self) -> Result<Arc<EpochSchedule>, InstructionError> {
         if self.epoch_schedule.clone().is_none() {
-            panic("no epoch schedule")
+            panic!("no epoch schedule")
         }
         self.epoch_schedule
             .clone()
@@ -80,7 +80,7 @@ impl SysvarCache {
     #[allow(deprecated)]
     pub fn get_fees(&self) -> Result<Arc<Fees>, InstructionError> {
         if self.fees.clone().is_none() {
-            panic("no fees")
+            panic!("no fees")
         }
         self.fees.clone().ok_or(InstructionError::UnsupportedSysvar)
     }
@@ -99,7 +99,7 @@ impl SysvarCache {
 
     pub fn get_rent(&self) -> Result<Arc<Rent>, InstructionError> {
         if self.rent.clone().is_none() {
-            panic("no rent")
+            panic!("no rent")
         }
         self.rent.clone().ok_or(InstructionError::UnsupportedSysvar)
     }
@@ -114,7 +114,7 @@ impl SysvarCache {
 
     pub fn get_slot_hashes(&self) -> Result<Arc<SlotHashes>, InstructionError> {
         if self.slot_hashes.clone().is_none() {
-            panic("no slot hashes")
+            panic!("no slot hashes")
         }
         self.slot_hashes
             .clone()
@@ -135,7 +135,7 @@ impl SysvarCache {
     #[allow(deprecated)]
     pub fn get_recent_blockhashes(&self) -> Result<Arc<RecentBlockhashes>, InstructionError> {
         if self.recent_blockhashes.clone().is_none() {
-            panic("no recent blockhashes")
+            panic!("no recent blockhashes")
         }
         self.recent_blockhashes
             .clone()
@@ -158,7 +158,7 @@ impl SysvarCache {
 
     pub fn get_stake_history(&self) -> Result<Arc<StakeHistory>, InstructionError> {
         if self.stake_history.clone().is_none() {
-            panic("no stake history")
+            panic!("no stake history")
         }
         self.stake_history
             .clone()
