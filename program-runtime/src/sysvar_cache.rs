@@ -39,6 +39,15 @@ pub struct SysvarCache {
 
 impl SysvarCache {
     pub fn get_clock(&self) -> Result<Arc<Clock>, InstructionError> {
+        if self.clock.clone().is_none() {
+            panic("no clock")
+        }
+        self.clock
+            .clone()
+            .ok_or(InstructionError::UnsupportedSysvar)
+    }
+
+    pub fn get_clock_no_panic(&self) -> Result<Arc<Clock>, InstructionError> {
         self.clock
             .clone()
             .ok_or(InstructionError::UnsupportedSysvar)
@@ -49,6 +58,15 @@ impl SysvarCache {
     }
 
     pub fn get_epoch_schedule(&self) -> Result<Arc<EpochSchedule>, InstructionError> {
+        if self.epoch_schedule.clone().is_none() {
+            panic("no epoch schedule")
+        }
+        self.epoch_schedule
+            .clone()
+            .ok_or(InstructionError::UnsupportedSysvar)
+    }
+
+    pub fn get_epoch_schedule_no_panic(&self) -> Result<Arc<EpochSchedule>, InstructionError> {
         self.epoch_schedule
             .clone()
             .ok_or(InstructionError::UnsupportedSysvar)
@@ -61,6 +79,15 @@ impl SysvarCache {
     #[deprecated]
     #[allow(deprecated)]
     pub fn get_fees(&self) -> Result<Arc<Fees>, InstructionError> {
+        if self.fees.clone().is_none() {
+            panic("no fees")
+        }
+        self.fees.clone().ok_or(InstructionError::UnsupportedSysvar)
+    }
+
+    #[deprecated]
+    #[allow(deprecated)]
+    pub fn get_fees_no_panic(&self) -> Result<Arc<Fees>, InstructionError> {
         self.fees.clone().ok_or(InstructionError::UnsupportedSysvar)
     }
 
@@ -71,6 +98,13 @@ impl SysvarCache {
     }
 
     pub fn get_rent(&self) -> Result<Arc<Rent>, InstructionError> {
+        if self.rent.clone().is_none() {
+            panic("no rent")
+        }
+        self.rent.clone().ok_or(InstructionError::UnsupportedSysvar)
+    }
+
+    pub fn get_rent_no_panic(&self) -> Result<Arc<Rent>, InstructionError> {
         self.rent.clone().ok_or(InstructionError::UnsupportedSysvar)
     }
 
@@ -79,6 +113,15 @@ impl SysvarCache {
     }
 
     pub fn get_slot_hashes(&self) -> Result<Arc<SlotHashes>, InstructionError> {
+        if self.slot_hashes.clone().is_none() {
+            panic("no slot hashes")
+        }
+        self.slot_hashes
+            .clone()
+            .ok_or(InstructionError::UnsupportedSysvar)
+    }
+
+    pub fn get_slot_hashes_no_panic(&self) -> Result<Arc<SlotHashes>, InstructionError> {
         self.slot_hashes
             .clone()
             .ok_or(InstructionError::UnsupportedSysvar)
@@ -91,6 +134,17 @@ impl SysvarCache {
     #[deprecated]
     #[allow(deprecated)]
     pub fn get_recent_blockhashes(&self) -> Result<Arc<RecentBlockhashes>, InstructionError> {
+        if self.recent_blockhashes.clone().is_none() {
+            panic("no recent blockhashes")
+        }
+        self.recent_blockhashes
+            .clone()
+            .ok_or(InstructionError::UnsupportedSysvar)
+    }
+
+    #[deprecated]
+    #[allow(deprecated)]
+    pub fn get_recent_blockhashes_no_panic(&self) -> Result<Arc<RecentBlockhashes>, InstructionError> {
         self.recent_blockhashes
             .clone()
             .ok_or(InstructionError::UnsupportedSysvar)
@@ -103,6 +157,15 @@ impl SysvarCache {
     }
 
     pub fn get_stake_history(&self) -> Result<Arc<StakeHistory>, InstructionError> {
+        if self.stake_history.clone().is_none() {
+            panic("no stake history")
+        }
+        self.stake_history
+            .clone()
+            .ok_or(InstructionError::UnsupportedSysvar)
+    }
+
+    pub fn get_stake_history_no_panic(&self) -> Result<Arc<StakeHistory>, InstructionError> {
         self.stake_history
             .clone()
             .ok_or(InstructionError::UnsupportedSysvar)
@@ -116,14 +179,14 @@ impl SysvarCache {
         &mut self,
         mut load_sysvar_account: F,
     ) {
-        if self.get_clock().is_err() {
+        if self.get_clock_no_panic().is_err() {
             if let Some(clock) = load_sysvar_account(&Clock::id())
                 .and_then(|account| bincode::deserialize(account.data()).ok())
             {
                 self.set_clock(clock);
             }
         }
-        if self.get_epoch_schedule().is_err() {
+        if self.get_epoch_schedule_no_panic().is_err() {
             if let Some(epoch_schedule) = load_sysvar_account(&EpochSchedule::id())
                 .and_then(|account| bincode::deserialize(account.data()).ok())
             {
@@ -131,21 +194,21 @@ impl SysvarCache {
             }
         }
         #[allow(deprecated)]
-        if self.get_fees().is_err() {
+        if self.get_fees_no_panic().is_err() {
             if let Some(fees) = load_sysvar_account(&Fees::id())
                 .and_then(|account| bincode::deserialize(account.data()).ok())
             {
                 self.set_fees(fees);
             }
         }
-        if self.get_rent().is_err() {
+        if self.get_rent_no_panic().is_err() {
             if let Some(rent) = load_sysvar_account(&Rent::id())
                 .and_then(|account| bincode::deserialize(account.data()).ok())
             {
                 self.set_rent(rent);
             }
         }
-        if self.get_slot_hashes().is_err() {
+        if self.get_slot_hashes_no_panic().is_err() {
             if let Some(slot_hashes) = load_sysvar_account(&SlotHashes::id())
                 .and_then(|account| bincode::deserialize(account.data()).ok())
             {
@@ -153,14 +216,14 @@ impl SysvarCache {
             }
         }
         #[allow(deprecated)]
-        if self.get_recent_blockhashes().is_err() {
+        if self.get_recent_blockhashes_no_panic().is_err() {
             if let Some(recent_blockhashes) = load_sysvar_account(&RecentBlockhashes::id())
                 .and_then(|account| bincode::deserialize(account.data()).ok())
             {
                 self.set_recent_blockhashes(recent_blockhashes);
             }
         }
-        if self.get_stake_history().is_err() {
+        if self.get_stake_history_no_panic().is_err() {
             if let Some(stake_history) = load_sysvar_account(&StakeHistory::id())
                 .and_then(|account| bincode::deserialize(account.data()).ok())
             {
