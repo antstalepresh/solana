@@ -20,6 +20,7 @@ pub fn process_instruction(
     data: &[u8],
     invoke_context: &mut InvokeContext,
 ) -> Result<(), InstructionError> {
+    println!("process_instruction config");
     let keyed_accounts = invoke_context.get_keyed_accounts()?;
 
     let key_list: ConfigKeys = limited_deserialize(data)?;

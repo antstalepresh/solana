@@ -60,6 +60,7 @@ pub fn process_instruction(
     _accounts: &[AccountInfo],
     _instruction_data: &[u8],
 ) -> ProgramResult {
+    println!("process_instruction custom heap");
     msg!("Custom heap");
     unsafe {
         let layout = Layout::from_size_align(usize::MAX - 0x42, align_of::<u8>()).unwrap();

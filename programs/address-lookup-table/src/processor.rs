@@ -25,6 +25,7 @@ pub fn process_instruction(
     instruction_data: &[u8],
     invoke_context: &mut InvokeContext,
 ) -> Result<(), InstructionError> {
+    println!("process_instruction addr lookup");
     match limited_deserialize(instruction_data)? {
         ProgramInstruction::CreateLookupTable {
             recent_slot,
