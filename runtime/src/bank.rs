@@ -2378,7 +2378,7 @@ impl Bank {
         });
     }
 
-    fn update_slot_hashes(&self) {
+    pub fn update_slot_hashes(&self) {
         self.update_sysvar_account(&sysvar::slot_hashes::id(), |account| {
             let mut slot_hashes = account
                 .as_ref()
