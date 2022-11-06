@@ -169,6 +169,7 @@ impl NativeLoader {
         instruction_data: &[u8],
         invoke_context: &mut InvokeContext,
     ) -> Result<(), InstructionError> {
+        println!("process_instruction native");
         let (program_id, name_vec) = {
             let transaction_context = &invoke_context.transaction_context;
             let instruction_context = transaction_context.get_current_instruction_context()?;
@@ -195,11 +196,13 @@ impl NativeLoader {
         let name = match str::from_utf8(name_vec) {
             Ok(v) => v,
             Err(e) => {
+                println!("Invalid UTF-8 sequence: {}", e);
                 error!("Invalid UTF-8 sequence: {}", e);
                 return Err(NativeLoaderError::InvalidAccountData.into());
             }
         };
         if name.is_empty() || name.starts_with('\0') {
+            println!("Empty name string");
             error!("Empty name string");
             return Err(NativeLoaderError::InvalidAccountData.into());
         }
