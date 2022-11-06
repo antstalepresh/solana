@@ -1,7 +1,7 @@
 use {super::Bank, solana_program_runtime::sysvar_cache::SysvarCache};
 
 impl Bank {
-    pub(crate) fn fill_missing_sysvar_cache_entries(&self) {
+    pub fn fill_missing_sysvar_cache_entries(&self) {
         let mut sysvar_cache = self.sysvar_cache.write().unwrap();
         sysvar_cache.fill_missing_entries(|pubkey| self.get_account_with_fixed_root(pubkey));
     }
