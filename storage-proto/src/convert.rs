@@ -620,6 +620,9 @@ impl TryFrom<tx_by_addr::TransactionError> for TransactionError {
                     ));
                 }
 
+                if instruction_error.error == 48 {
+                    panic!("unsupported sysvar");
+                }
                 let ie = match instruction_error.error {
                     0 => InstructionError::GenericError,
                     1 => InstructionError::InvalidArgument,
