@@ -1037,10 +1037,12 @@ impl Accounts {
         }
 
         for k in writable_keys {
+            println!("locking {} write", k);
             account_locks.write_locks.insert(*k);
         }
 
         for k in readonly_keys {
+            println!("locking {} read", k);
             if !account_locks.lock_readonly(k) {
                 account_locks.insert_new_readonly(k);
             }
@@ -1056,9 +1058,11 @@ impl Accounts {
         readonly_keys: Vec<&Pubkey>,
     ) {
         for k in writable_keys {
+            println!("unlocking {} write", k);
             account_locks.unlock_write(k);
         }
         for k in readonly_keys {
+            println!("unlocking {} read", k);
             account_locks.unlock_readonly(k);
         }
     }
