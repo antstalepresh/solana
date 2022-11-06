@@ -167,11 +167,16 @@ pub fn builtin_process_instruction(
         .collect::<Result<Vec<AccountInfo>, InstructionError>>()?;
 
     // Execute the program
-    process_instruction(program_id, &account_infos, input).map_err(|err| {
+    match process_instruction(program_id, &account_infos, input).map_err(|err| {
         let err = u64::from(err);
         stable_log::program_failure(&log_collector, program_id, &err.into());
         err
-    })?;
+    }) {
+        Ok(_) => (),
+        Err(e) => {
+            panic!(e)
+        }
+    }
     stable_log::program_success(&log_collector, program_id);
 
     // Commit AccountInfo changes back into KeyedAccounts
@@ -231,7 +236,9 @@ fn get_sysvar<T: Default + Sysvar + Sized + serde::de::DeserializeOwned + Clone>
             *(var_addr as *mut _ as *mut T) = T::clone(&sysvar_data);
             SUCCESS
         },
-        Err(_) => UNSUPPORTED_SYSVAR,
+        Err(_) => {
+            panic!("Unsupported sysvar")
+        },
     }
 }
 

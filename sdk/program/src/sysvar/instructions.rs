@@ -117,7 +117,8 @@ pub fn load_current_index_checked(
     instruction_sysvar_account_info: &AccountInfo,
 ) -> Result<u16, ProgramError> {
     if !check_id(instruction_sysvar_account_info.key) {
-        return Err(ProgramError::UnsupportedSysvar);
+        panic!("unsupported sysvar");
+        // return Err(ProgramError::UnsupportedSysvar);
     }
 
     let instruction_sysvar = instruction_sysvar_account_info.try_borrow_data()?;
@@ -194,7 +195,8 @@ pub fn load_instruction_at_checked(
     instruction_sysvar_account_info: &AccountInfo,
 ) -> Result<Instruction, ProgramError> {
     if !check_id(instruction_sysvar_account_info.key) {
-        return Err(ProgramError::UnsupportedSysvar);
+        panic!("unsupported sysvar");
+        // return Err(ProgramError::UnsupportedSysvar);
     }
 
     let instruction_sysvar = instruction_sysvar_account_info.try_borrow_data()?;
@@ -211,7 +213,8 @@ pub fn get_instruction_relative(
     instruction_sysvar_account_info: &AccountInfo,
 ) -> Result<Instruction, ProgramError> {
     if !check_id(instruction_sysvar_account_info.key) {
-        return Err(ProgramError::UnsupportedSysvar);
+        panic!("unsupported sysvar");
+        // return Err(ProgramError::UnsupportedSysvar);
     }
 
     let instruction_sysvar = instruction_sysvar_account_info.data.borrow();
