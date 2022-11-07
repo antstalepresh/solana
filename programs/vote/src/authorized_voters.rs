@@ -91,6 +91,9 @@ impl AuthorizedVoters {
             // If no authorized voter has been set yet for this epoch,
             // this must mean the authorized voter remains unchanged
             // from the latest epoch before this one
+            self.authorized_voters.iter().for_each(|(k,v)| {
+                println!("authorized voter {} {}", k, v);
+            });
             let res = self.authorized_voters.range(0..epoch).next_back();
 
             println!("get voter for epoch {}", epoch);
