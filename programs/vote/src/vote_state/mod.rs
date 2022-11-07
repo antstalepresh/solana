@@ -709,6 +709,7 @@ impl VoteState {
                 "{} dropped vote slots {:?}, vote hash: {:?} slot hashes:SlotHash {:?}, too old ",
                 self.node_pubkey, vote_slots, vote_hash, slot_hashes
             );
+            println!("Vote too old");
             return Err(VoteError::VoteTooOld);
         }
         if i != vote_slots.len() {
@@ -719,6 +720,7 @@ impl VoteState {
                 self.node_pubkey, vote_slots, slot_hashes,
             );
             inc_new_counter_info!("dropped-vote-slot", 1);
+            println!("Slots mismatch");
             return Err(VoteError::SlotsMismatch);
         }
         if &slot_hashes[j].1 != vote_hash {
@@ -730,6 +732,7 @@ impl VoteState {
                 self.node_pubkey, vote_slots, vote_hash, slot_hashes[j].1
             );
             inc_new_counter_info!("dropped-vote-hash", 1);
+            println!("Slots hash mismatch");
             return Err(VoteError::SlotHashMismatch);
         }
         Ok(())
@@ -907,6 +910,7 @@ impl VoteState {
         feature_set: Option<&FeatureSet>,
     ) -> Result<(), VoteError> {
         if vote.slots.is_empty() {
+            println!("empty slots");
             return Err(VoteError::EmptySlots);
         }
         let filtered_vote_slots = feature_set.and_then(|feature_set| {
@@ -927,6 +931,7 @@ impl VoteState {
 
         let vote_slots = filtered_vote_slots.as_ref().unwrap_or(&vote.slots);
         if vote_slots.is_empty() {
+            println!("VotesTooOldAllFiltered");
             return Err(VoteError::VotesTooOldAllFiltered);
         }
 
@@ -1270,6 +1275,7 @@ fn verify_authorized_signer<S: std::hash::BuildHasher>(
     signers: &HashSet<Pubkey, S>,
 ) -> Result<(), InstructionError> {
     if signers.contains(authorized) {
+        println!("verified authorized signer");
         Ok(())
     } else {
         Err(InstructionError::MissingRequiredSignature)
