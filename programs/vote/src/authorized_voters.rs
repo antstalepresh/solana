@@ -93,13 +93,16 @@ impl AuthorizedVoters {
             // from the latest epoch before this one
             let res = self.authorized_voters.range(0..epoch).next_back();
 
+            println!("get voter for epoch {}", epoch);
             if res.is_none() {
+                println!("no voter");
                 warn!(
                     "Tried to query for the authorized voter of an epoch earlier
                     than the current epoch. Earlier epochs have been purged"
                 );
             }
 
+            println!("got voter {}", res.clone().unwrap().1.to_owned());
             res.map(|(_, pubkey)| (*pubkey, false))
         } else {
             res.map(|pubkey| (*pubkey, true))
