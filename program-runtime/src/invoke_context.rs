@@ -947,7 +947,6 @@ impl<'a> InvokeContext<'a> {
         &mut self,
         instruction_data: &[u8],
     ) -> Result<(), InstructionError> {
-        println!("process_executable_chain");
         let instruction_context = self.transaction_context.get_current_instruction_context()?;
 
         let (first_instruction_account, builtin_id) = {
@@ -966,7 +965,6 @@ impl<'a> InvokeContext<'a> {
             if entry.program_id == builtin_id {
                 let program_id = instruction_context.get_program_id(self.transaction_context);
                 if builtin_id == program_id {
-                    println!("process_executable_chain builtin");
                     let logger = self.get_log_collector();
                     stable_log::program_invoke(&logger, &program_id, self.get_stack_height());
                     return (entry.process_instruction)(
@@ -982,7 +980,6 @@ impl<'a> InvokeContext<'a> {
                         err
                     });
                 } else {
-                    println!("process_executable_chain else");
                     return (entry.process_instruction)(
                         first_instruction_account,
                         instruction_data,
@@ -997,7 +994,6 @@ impl<'a> InvokeContext<'a> {
             if builtin_id == program_id {
                 let native_loader = NativeLoader::default();
                 // Call the program via the native loader
-                println!("process_executable_chain native");
                 return native_loader.process_instruction(0, instruction_data, self);
             }
         }

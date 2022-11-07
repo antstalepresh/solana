@@ -15,8 +15,7 @@ impl Sysvar for SlotHashes {
     }
     fn from_account_info(_account_info: &AccountInfo) -> Result<Self, ProgramError> {
         // This sysvar is too large to bincode::deserialize in-program
-        panic!("unsupported sysvar");
-        // Err(ProgramError::UnsupportedSysvar)
+        Err(ProgramError::UnsupportedSysvar)
     }
 }
 

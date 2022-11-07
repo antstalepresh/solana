@@ -47,7 +47,7 @@ use {
         accounts_update_notifier_interface::AccountsUpdateNotifier,
         ancestors::{Ancestors, AncestorsForSerialization},
         blockhash_queue::BlockhashQueue,
-        builtins::{self, BuiltinAction, BuiltinFeatureTransition, Builtins},
+        builtins::{self, BuiltinAction, BuiltinFeatureTransition, Builtins, Builtin},
         cost_tracker::CostTracker,
         epoch_stakes::{EpochStakes, NodeVoteAccounts},
         inline_spl_associated_token_account, inline_spl_token,
@@ -161,6 +161,12 @@ use {
         time::{Duration, Instant},
     },
 };
+
+macro_rules! to_builtin {
+    ($b:expr) => {
+        Builtin::new(&$b.0, $b.1, $b.2)
+    };
+}
 
 #[derive(Debug, Default)]
 struct RewardsMetrics {
@@ -1476,6 +1482,51 @@ impl Bank {
     }
 
     #[allow(clippy::too_many_arguments)]
+    pub fn new_with_paths_for_replay(
+        genesis_config: &GenesisConfig,
+        paths: Vec<PathBuf>,
+        account_indexes: AccountSecondaryIndexes,
+        accounts_db_caching_enabled: bool,
+        shrink_ratio: AccountShrinkThreshold,
+        accounts_db_config: Option<AccountsDbConfig>,
+        sysvar_accounts: HashMap<Pubkey, AccountSharedData>,
+    ) {
+        let accounts = Accounts::new_with_config(
+            paths,
+            &genesis_config.cluster_type,
+            account_indexes,
+            accounts_db_caching_enabled,
+            shrink_ratio,
+            accounts_db_config,
+            None,
+        );
+        let mut bank = Self::default_with_accounts(accounts);
+        bank.ancestors = Ancestors::from(vec![bank.slot()]);
+        bank.cluster_type = Some(genesis_config.cluster_type);
+
+        bank.process_genesis_config(genesis_config);
+        bank.finish_init(
+            genesis_config,
+            Some(&Builtins {
+                genesis_builtins: vec![
+                    to_builtin!(solana_bpf_loader_deprecated_program!()),
+                    to_builtin!(solana_bpf_loader_program_with_jit!()),
+                    to_builtin!(solana_bpf_loader_upgradeable_program_with_jit!()),
+                ],
+                feature_transitions: vec![],
+            }),
+            false,
+        );
+
+        sysvar_accounts.iter().for_each(|(id, acct)| {
+            bank.update_sysvar_account(id, |_| {
+                acct.clone()
+            });
+        });
+        bank.fill_missing_sysvar_cache_entries();
+    }
+
+    #[allow(clippy::too_many_arguments)]
     pub fn new_with_paths(
         genesis_config: &GenesisConfig,
         paths: Vec<PathBuf>,
@@ -2336,8 +2387,7 @@ impl Bank {
         let clock = sysvar::clock::Clock {
             slot: self.slot,
             epoch_start_timestamp,
-            // epoch: self.epoch_schedule.get_epoch(self.slot),
-            epoch: 20,
+            epoch: self.epoch_schedule.get_epoch(self.slot),
             leader_schedule_epoch: self.epoch_schedule.get_leader_schedule_epoch(self.slot),
             unix_timestamp,
         };
@@ -2379,7 +2429,7 @@ impl Bank {
         });
     }
 
-    pub fn update_slot_hashes(&self) {
+    fn update_slot_hashes(&self) {
         self.update_sysvar_account(&sysvar::slot_hashes::id(), |account| {
             let mut slot_hashes = account
                 .as_ref()

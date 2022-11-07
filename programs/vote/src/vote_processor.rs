@@ -57,7 +57,6 @@ pub fn process_instruction(
     data: &[u8],
     invoke_context: &mut InvokeContext,
 ) -> Result<(), InstructionError> {
-    println!("process_instruction vote");
     let keyed_accounts = invoke_context.get_keyed_accounts()?;
 
     trace!("process_instruction: {:?}", data);
@@ -71,7 +70,6 @@ pub fn process_instruction(
     let signers: HashSet<Pubkey> = get_signers(&keyed_accounts[first_instruction_account..]);
     match limited_deserialize(data)? {
         VoteInstruction::InitializeAccount(vote_init) => {
-            println!("InitializeAccount");
             Err(InstructionError::InvalidArgument)
             // let rent = get_sysvar_with_account_check::rent(
             //     keyed_account_at_index(keyed_accounts, first_instruction_account + 1)?,
@@ -85,7 +83,6 @@ pub fn process_instruction(
             // vote_state::initialize_account(me, &vote_init, &signers, &clock)
         }
         VoteInstruction::Authorize(voter_pubkey, vote_authorize) => {
-            println!("Authorize");
             let clock = get_sysvar_with_account_check::clock(
                 keyed_account_at_index(keyed_accounts, first_instruction_account + 1)?,
                 invoke_context,
@@ -100,7 +97,6 @@ pub fn process_instruction(
             )
         }
         VoteInstruction::AuthorizeWithSeed(args) => {
-            println!("AuthorizeWithSeed");
             if !invoke_context
                 .feature_set
                 .is_active(&feature_set::vote_authorize_with_seed::id())
@@ -124,7 +120,6 @@ pub fn process_instruction(
             )
         }
         VoteInstruction::AuthorizeCheckedWithSeed(args) => {
-            println!("AuthorizeCheckedWithSeed");
             if !invoke_context
                 .feature_set
                 .is_active(&feature_set::vote_authorize_with_seed::id())
@@ -157,11 +152,9 @@ pub fn process_instruction(
             &signers,
         ),
         VoteInstruction::UpdateCommission(commission) => {
-            println!("UpdateCommission");
             vote_state::update_commission(me, commission, &signers)
         }
         VoteInstruction::Vote(vote) | VoteInstruction::VoteSwitch(vote, _) => {
-            println!("Vote");
             let slot_hashes = get_sysvar_with_account_check::slot_hashes(
                 keyed_account_at_index(keyed_accounts, first_instruction_account + 1)?,
                 invoke_context,
@@ -181,7 +174,6 @@ pub fn process_instruction(
         }
         VoteInstruction::UpdateVoteState(vote_state_update)
         | VoteInstruction::UpdateVoteStateSwitch(vote_state_update, _) => {
-            println!("UpdateVoteState");
             if invoke_context
                 .feature_set
                 .is_active(&feature_set::allow_votes_to_directly_update_vote_state::id())
@@ -201,7 +193,6 @@ pub fn process_instruction(
             }
         }
         VoteInstruction::Withdraw(lamports) => {
-            println!("Withdraw");
             let to = keyed_account_at_index(keyed_accounts, first_instruction_account + 1)?;
             let rent_sysvar = if invoke_context
                 .feature_set
@@ -231,7 +222,6 @@ pub fn process_instruction(
             )
         }
         VoteInstruction::AuthorizeChecked(vote_authorize) => {
-            println!("AuthorizeChecked");
             if invoke_context
                 .feature_set
                 .is_active(&feature_set::vote_stake_checked_instructions::id())

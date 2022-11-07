@@ -28,7 +28,6 @@ pub fn process_instruction(
     input: &[u8],
     invoke_context: &mut InvokeContext,
 ) -> Result<(), InstructionError> {
-    println!("process_instruction zk token proof");
     if invoke_context.get_stack_height() != TRANSACTION_LEVEL_STACK_HEIGHT {
         // Not supported as an inner instruction
         return Err(InstructionError::UnsupportedProgramId);

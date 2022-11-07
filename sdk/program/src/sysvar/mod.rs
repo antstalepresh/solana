@@ -122,8 +122,7 @@ pub trait Sysvar:
         bincode::serialize_into(&mut account_info.data.borrow_mut()[..], self).ok()
     }
     fn get() -> Result<Self, ProgramError> {
-        panic!("unsupported sysvar");
-        // Err(ProgramError::UnsupportedSysvar)
+        Err(ProgramError::UnsupportedSysvar)
     }
 }
 

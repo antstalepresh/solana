@@ -709,7 +709,6 @@ impl VoteState {
                 "{} dropped vote slots {:?}, vote hash: {:?} slot hashes:SlotHash {:?}, too old ",
                 self.node_pubkey, vote_slots, vote_hash, slot_hashes
             );
-            println!("Vote too old");
             return Err(VoteError::VoteTooOld);
         }
         if i != vote_slots.len() {
@@ -720,7 +719,6 @@ impl VoteState {
                 self.node_pubkey, vote_slots, slot_hashes,
             );
             inc_new_counter_info!("dropped-vote-slot", 1);
-            println!("Slots mismatch");
             return Err(VoteError::SlotsMismatch);
         }
         if &slot_hashes[j].1 != vote_hash {
@@ -732,7 +730,6 @@ impl VoteState {
                 self.node_pubkey, vote_slots, vote_hash, slot_hashes[j].1
             );
             inc_new_counter_info!("dropped-vote-hash", 1);
-            println!("Slots hash mismatch");
             return Err(VoteError::SlotHashMismatch);
         }
         Ok(())
@@ -910,7 +907,6 @@ impl VoteState {
         feature_set: Option<&FeatureSet>,
     ) -> Result<(), VoteError> {
         if vote.slots.is_empty() {
-            println!("empty slots");
             return Err(VoteError::EmptySlots);
         }
         let filtered_vote_slots = feature_set.and_then(|feature_set| {
@@ -931,7 +927,6 @@ impl VoteState {
 
         let vote_slots = filtered_vote_slots.as_ref().unwrap_or(&vote.slots);
         if vote_slots.is_empty() {
-            println!("VotesTooOldAllFiltered");
             return Err(VoteError::VotesTooOldAllFiltered);
         }
 
@@ -1124,13 +1119,10 @@ impl VoteState {
         &mut self,
         current_epoch: Epoch,
     ) -> Result<Pubkey, InstructionError> {
-        let pubkeyopt = self
-        .authorized_voters
-        .get_and_cache_authorized_voter_for_epoch(current_epoch);
-        if pubkeyopt.is_none() {
-            println!("no authorized voter");
-        }
-        let pubkey = pubkeyopt.ok_or(InstructionError::InvalidAccountData)?;
+        let pubkey = self
+            .authorized_voters
+            .get_and_cache_authorized_voter_for_epoch(current_epoch)
+            .ok_or(InstructionError::InvalidAccountData)?;
         self.authorized_voters
             .purge_authorized_voters(current_epoch);
         Ok(pubkey)
@@ -1275,7 +1267,6 @@ fn verify_authorized_signer<S: std::hash::BuildHasher>(
     signers: &HashSet<Pubkey, S>,
 ) -> Result<(), InstructionError> {
     if signers.contains(authorized) {
-        println!("verified authorized signer");
         Ok(())
     } else {
         Err(InstructionError::MissingRequiredSignature)
@@ -1368,9 +1359,7 @@ fn verify_and_get_vote_state<S: std::hash::BuildHasher>(
     clock: &Clock,
     signers: &HashSet<Pubkey, S>,
 ) -> Result<VoteState, InstructionError> {
-    println!("verify_and_get_vote_state {}", vote_account.unsigned_key());
     let versioned = State::<VoteStateVersions>::state(vote_account)?;
-    println!("versioned {}", versioned.clone().convert_to_current().authorized_voters().is_empty());
 
     if versioned.is_uninitialized() {
         return Err(InstructionError::UninitializedAccount);
