@@ -1364,7 +1364,7 @@ fn verify_and_get_vote_state<S: std::hash::BuildHasher>(
 ) -> Result<VoteState, InstructionError> {
     println!("verify_and_get_vote_state {}", vote_account.unsigned_key());
     let versioned = State::<VoteStateVersions>::state(vote_account)?;
-    println!("versioned {}", versioned.convert_to_current().authorized_voters().is_empty());
+    println!("versioned {}", versioned.clone().convert_to_current().authorized_voters().is_empty());
 
     if versioned.is_uninitialized() {
         return Err(InstructionError::UninitializedAccount);
