@@ -1490,7 +1490,7 @@ impl Bank {
         shrink_ratio: AccountShrinkThreshold,
         accounts_db_config: Option<AccountsDbConfig>,
         sysvar_accounts: HashMap<Pubkey, AccountSharedData>,
-    ) {
+    ) -> Self {
         let accounts = Accounts::new_with_config(
             paths,
             &genesis_config.cluster_type,
@@ -1524,6 +1524,8 @@ impl Bank {
             });
         });
         bank.fill_missing_sysvar_cache_entries();
+
+        bank
     }
 
     #[allow(clippy::too_many_arguments)]
