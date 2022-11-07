@@ -1119,10 +1119,13 @@ impl VoteState {
         &mut self,
         current_epoch: Epoch,
     ) -> Result<Pubkey, InstructionError> {
-        let pubkey = self
-            .authorized_voters
-            .get_and_cache_authorized_voter_for_epoch(current_epoch)
-            .ok_or(InstructionError::InvalidAccountData)?;
+        let pubkeyopt = self
+        .authorized_voters
+        .get_and_cache_authorized_voter_for_epoch(current_epoch);
+        if pubkeyopt.is_none() {
+            println!("no authorized voter");
+        }
+        let pubkey = pubkeyopt.ok_or(InstructionError::InvalidAccountData)?;
         self.authorized_voters
             .purge_authorized_voters(current_epoch);
         Ok(pubkey)
