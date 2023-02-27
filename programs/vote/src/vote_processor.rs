@@ -76,13 +76,7 @@ pub fn process_instruction(
     let signers = instruction_context.get_signers(transaction_context);
     match limited_deserialize(data)? {
         VoteInstruction::InitializeAccount(vote_init) => {
-            let rent = get_sysvar_with_account_check::rent(invoke_context, instruction_context, 1)?;
-            if !rent.is_exempt(me.get_lamports(), me.get_data().len()) {
-                return Err(InstructionError::InsufficientFunds);
-            }
-            let clock =
-                get_sysvar_with_account_check::clock(invoke_context, instruction_context, 2)?;
-            vote_state::initialize_account(&mut me, &vote_init, &signers, &clock)
+            Err(InstructionError::InvalidArgument)
         }
         VoteInstruction::Authorize(voter_pubkey, vote_authorize) => {
             let clock =
